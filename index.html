@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Weather App</h1>
+    <div class="search-box">
+      <input type="text" id="city" placeholder="Enter city name..." />
+      <button id="submit">Get Weather</button>
+    </div>
+    <div id="weather-info" class="weather-card hidden">
+      <h2 id="city-name"></h2>
+      <h3 id="temperature"></h3>
+      <p id="condition"></p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('submit').addEventListener('click', () => {
+      let city = document.getElementById('city').value.trim();
+      if (city !== "") {
+        getWeather(city);
+      }
+    });
+
+    function getWeather(city) {
+      const apiKey = 'b2a08903ef19bb7ec6b4cb184f0c812f';
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('City not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('weather-info').classList.remove('hidden');
+          document.getElementById('city-name').innerText = `${data.name}, ${data.sys.country}`;
+          document.getElementById('temperature').innerText = `Temperature: ${data.main.temp} °C`;
+          document.getElementById('condition').innerText = `Condition: ${data.weather[0].description}`;
+        })
+        .catch(error => {
+          alert(error.message);
+          document.getElementById('weather-info').classList.add('hidden');
+        });
+    }
+  </script>
+</body>
+</html>
